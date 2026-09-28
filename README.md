@@ -19,3 +19,11 @@ GitHub에서 빈 공개 레포 `tree-film-web`을 만든 뒤 아래 한 줄을 �
 
 GitHub Pages 설정에서 Source를 `GitHub Actions`로 선택한다. 커스텀 도메인을 연결할 때는 workflow의 `VITE_BASE_PATH`를 `/`로 바꾼다.
 
+## 로컬 실행
+
+```bash
+mise install
+mise run dev
+```
+
+`mise.toml`은 Node 22.23.3을 고정하고, `package.json`의 pnpm 11.19.0을 Corepack으로 실행한다.

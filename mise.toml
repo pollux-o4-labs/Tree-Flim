@@ -1,0 +1,14 @@
+[tools]
+node = "22.23.3"
+
+[tasks.install]
+description = "Install the exact web dependencies"
+run = "corepack pnpm install --frozen-lockfile"
+
+[tasks.dev]
+description = "Run the visitor site and local content studio"
+run = "corepack pnpm dev"
+
+[tasks.build]
+description = "Typecheck and build the GitHub Pages artifact"
+run = "corepack pnpm build"
