@@ -1,0 +1,30 @@
+.ds-preview { min-height:100dvh; background:var(--total-paper); color:var(--total-ink); font-family:var(--sans); }
+.ds-preview > main { max-width:960px; padding:40px 24px 80px; margin:auto; }
+.ds-preview nav { display:flex; justify-content:space-between; gap:var(--total-space-large); align-items:center; }
+.ds-preview nav button { min-height:44px; border-bottom:1px solid var(--total-accent-line); }
+.ds-preview header { padding:64px 0 32px; }
+.ds-preview h1 { font:32px/1.6 var(--serif); }
+.ds-preview h2 { font:22px/1.6 var(--serif); }
+.ds-preview section { padding:var(--total-space-section) 0; border-top:1px solid var(--total-line); }
+.ds-preview p { line-height:1.9; }
+.ds-preview .ds-swatches { display:flex; flex-wrap:wrap; gap:var(--total-space-large); }
+.ds-preview .ds-swatches span { display:block; height:64px; border:1px solid var(--total-line); margin-bottom:var(--total-space-small); }
+.ds-preview .ds-swatches code { font-size:12px; }
+.ds-preview .ds-serif { font-family:var(--serif); }
+.ds-preview .ds-display { font:italic 28px/1.5 var(--display); }
+.ds-preview .deck-scale-demo { background:var(--total-control); padding-inline:24px; }
+.ds-preview .ds-index { flex-wrap:wrap; justify-content:flex-start; gap:8px 24px; padding-bottom:24px; }
+.ds-preview .ds-index a { display:inline-flex; align-items:center; min-height:44px; border-bottom:1px solid var(--total-accent-line); }
+.ds-preview :is(li,dd) { line-height:1.9; }
+.ds-preview dt { font:20px/1.6 var(--serif); margin-top:24px; }
+.ds-preview dd { margin:8px 0 0; }
+.ds-preview code { overflow-wrap:anywhere; }
+.ds-preview section[id] { scroll-margin-top:24px; }
+.ds-documentation article > ul { list-style:none; padding:0; }
+.ds-documentation article > ul > li { margin:28px 0; }
+.ds-documentation article ul ul { padding-left:24px; margin-top:10px; }
+.ds-documentation article a { text-decoration:underline; text-underline-offset:4px; }
+.ds-documentation article { overflow-wrap:anywhere; scroll-margin-top:24px; }
+.ds-documentation article:focus-visible { outline:2px solid var(--total-accent); outline-offset:8px; }
+.ds-documentation pre { overflow:auto; padding:16px; background:var(--total-section); }
+.ds-source,.ds-repo-reference { font-size:12px; color:var(--total-subtle); }

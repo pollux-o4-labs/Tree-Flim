@@ -1,0 +1,67 @@
+/* Theme tokens only. Layout, responsive rules, and component structure live in total.css. */
+.prototype-total {
+  --total-motion-feedback: 200ms;
+  --total-motion-enter: 240ms;
+  --total-motion-image: 600ms;
+  --total-ease-feedback: ease;
+  --total-ease-enter: cubic-bezier(.22, 1, .36, 1);
+  --total-space-small: 8px;
+  --total-space-medium: 16px;
+  --total-space-large: 24px;
+  --total-space-section: 32px;
+  --total-ink: #55483b;
+  --total-muted: #948777;
+  --total-paper: #f4efe5;
+  --total-line: #acb1a333;
+  --total-accent: #aa9070;
+  --total-subtle: #8c7b66;
+  --total-section: #e9dfcf;
+  --total-contact-section: #e9dfcf;
+  --total-story-alt: #eee8dc;
+  --total-border: #aeb6a3;
+  --total-card: #fffaf1;
+  --total-glass: #f8f7f1ee;
+  --total-control: #525b46;
+  --total-control-border: #ced2c2;
+  --total-action: #506044;
+  --total-dialog-ink: #343b31;
+  --total-backdrop: #1e241dcc;
+  --total-dialog-surface: #f6f3e9;
+  --total-dialog-surface-muted: #f5f3eddd;
+  --total-image-surface: #e4e4db;
+  --total-input-line: #b9c0ad;
+  --total-input-surface: #eceee5;
+  --total-accent-line: #b7aa96;
+  --total-overlay: #18201535;
+  --total-shadow: #47392313;
+  --total-on-image: #f8f7ed;
+}
+
+.prototype-total[data-theme="dark"] {
+  --total-ink: #ecebe2;
+  --total-muted: #a3ada0;
+  --total-paper: #222d28;
+  --total-line: #aab19844;
+  --total-accent: #9bab91;
+  --total-subtle: #a3ada0;
+  --total-section: #18241e;
+  --total-contact-section: #344332;
+  --total-story-alt: #2c3830;
+  --total-border: #aab19866;
+  --total-card: #3b493d;
+  --total-glass: #2c3830ee;
+  --total-control: #d9dfd1;
+  --total-control-border: #6d7b6b;
+  --total-action: #506044;
+  --total-dialog-ink: #ecebe2;
+  --total-backdrop: #0d1510dd;
+  --total-dialog-surface: #2c3830;
+  --total-dialog-surface-muted: #222d28dd;
+  --total-image-surface: #344332;
+  --total-input-line: #718070;
+  --total-input-surface: #26342c;
+  --total-accent-line: #819080;
+  --total-overlay: #18241e66;
+  --total-shadow: #0d151033;
+  --total-on-image: #f8f7ed;
+}

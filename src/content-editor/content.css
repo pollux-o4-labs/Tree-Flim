@@ -1,0 +1,8 @@
+.content-text { all: unset; display: contents; white-space: pre-line; }
+html[data-content-editing=true] .content-text[data-content-empty] { display: inline-block; min-width: 2em; min-height: 1em; border: 1px dashed #31896a; }
+html[data-content-editing=true] .content-text[data-content-empty]::after { content: '빈 문구'; font: 11px sans-serif; color: #31896a; }
+html[data-content-editing=true] [data-content-id] { cursor: crosshair !important; pointer-events: auto; }
+html[data-content-editing=true] [data-content-id]:hover { outline: 1px dashed #31896a; outline-offset: 4px; }
+html[data-content-editing=true] [data-content-selected] { outline: 2px solid #31896a; outline-offset: 4px; }
+html[data-content-editing=true] .content-text:hover,html[data-content-editing=true] .content-text[data-content-selected] { display: inline; background: #31896a18; }
+.content-attachment { display: inline-flex; margin: 20px 0; padding: 12px 18px; border: 1px solid currentColor; font: 13px var(--sans); }

@@ -1,0 +1,42 @@
+{
+  "name": "tree-film-web",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.19.0",
+  "engines": {
+    "node": ">=20.19.5"
+  },
+  "scripts": {
+    "check:design-system": "node scripts/check-design-system.mjs",
+    "test:design-system": "playwright test --config=playwright.design-system.config.ts",
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build && node scripts/create-pages-fallback.mjs",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test:portfolio": "playwright test tests/portfolio/test-por-001.spec.ts",
+    "test:portfolio:update": "playwright test tests/portfolio/test-por-001.spec.ts --update-snapshots",
+    "check:docs": "node scripts/check-doc-lines.mjs",
+    "check:docs:staged": "node scripts/check-doc-lines.mjs --staged"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.47.0",
+    "motion": "^13.4.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.18.4",
+    "tailwind-merge": "^3.7.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^26.6.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^4.7.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^6.4.3"
+  }
+}

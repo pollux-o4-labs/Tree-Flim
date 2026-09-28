@@ -1,0 +1,41 @@
+/* Transparent dialog: the page remains the setting, cards supply the surfaces. */
+.prototype-total .collection-modal { width:100vw; height:100dvh; max-height:100dvh; max-width:none; margin:0; border:0; background:transparent; box-shadow:none; color:var(--total-on-image); }
+.prototype-total .collection-modal::backdrop { background:color-mix(in srgb,var(--total-backdrop) 82%,transparent); backdrop-filter:blur(9px); }
+.prototype-total .collection-modal .consultation-layout { max-width:1060px; margin:auto; }
+.prototype-total .collection-modal .consultation-heading { text-align:center; padding:18px 60px 6px; border:0; }
+.prototype-total .collection-modal .consultation-heading h2 { font-size:30px; }
+.prototype-total .collection-modal .consultation-heading :is(.eyebrow,p) { color:var(--total-on-image); opacity:.75; }
+.prototype-total .collection-modal .consultation-heading > p:last-child { color:var(--total-on-image); }
+.prototype-total .collection-modal .dialog-close { background:transparent; color:var(--total-on-image); top:20px; right:24px; }
+.prototype-total .collection-modal .consultation-body { padding:0 48px 30px; scrollbar-width:thin; }
+.prototype-total .collection-modal .panel-back { color:var(--total-on-image); margin:0; }
+.prototype-total .collection-modal .deck-instruction { color:var(--total-on-image); opacity:.7; }
+.prototype-total .collection-modal .deck-card { transform:none; transition:box-shadow var(--total-motion-feedback) var(--total-ease-feedback); border:0; border-radius:3px; padding:10px 10px 16px; box-shadow:0 16px 40px var(--total-backdrop); }
+.prototype-total .collection-modal .deck-card img { height:clamp(110px,19vh,210px); object-position:center 65%; }
+.prototype-total .collection-modal .deck-hand { padding:30px 24px 26px; }
+.prototype-total .collection-modal .deck-card[aria-pressed=true] { outline:2px solid var(--total-accent); outline-offset:5px; }
+.prototype-total .collection-modal .deck-card:focus-visible { outline:2px solid var(--total-on-image); outline-offset:7px; }
+.prototype-total .collection-modal .deck-selection { background:transparent; border-color:var(--total-accent-line); min-height:80px; padding:14px 0; }
+.prototype-total .collection-modal .deck-selection :is(p,h3,.eyebrow) { color:var(--total-on-image); }
+.prototype-total .collection-modal .deck-confirm { background:var(--total-card); color:var(--total-ink); }
+.prototype-total .chosen-origin { display:flex; flex-shrink:0; gap:12px; align-items:center; margin:0 auto 12px; padding:6px 16px 6px 6px; background:var(--total-card); color:var(--total-ink); border-radius:3px; text-align:left; }
+.prototype-total .chosen-origin img { width:36px; height:38px; object-fit:cover; }
+.prototype-total .chosen-origin span { font:16px var(--serif); }
+.prototype-total .chosen-origin small { display:block; font:10px/1.7 var(--sans); margin-top:6px; }
+.prototype-total .consultation-layout[data-mode=guide] .consultation-body:has(.chosen-origin) > .panel-back { display:none; }
+.prototype-total .wedding-guide .deck-instruction { display:none; }
+.prototype-total .collection-modal .wedding-guide { display:flex; flex-direction:column; }
+.prototype-total .collection-modal .wedding-guide > .package-common { order:2; margin:8px 0; }
+.prototype-total .collection-modal .wedding-guide > .package-important { order:3; }
+.prototype-total .collection-modal .wedding-guide > .package-policies { order:4; }
+.prototype-total .collection-modal .deck-story { min-height:0; }
+.prototype-total .collection-modal :is(.package-common,.package-important) { color:var(--total-on-image); opacity:.8; font-size:11px; }
+.prototype-total .collection-modal .package-policies { color:var(--total-on-image); }
+.prototype-total .collection-modal :is(.inquiry-draft,.consultation-faq,.panel-seasonal) { background:var(--total-paper); color:var(--total-ink); padding:24px; border-radius:3px; }
+.prototype-total .collection-modal .consultation-faq .package-policies { color:var(--total-ink); }
+@media(max-width:600px) {
+  .prototype-total .collection-modal .consultation-heading { padding:24px 48px 6px; }
+  .prototype-total .collection-modal .consultation-heading h2 { font-size:23px; padding:0; }
+  .prototype-total .collection-modal .consultation-body { padding-inline:20px; }
+  .prototype-total .collection-modal .deck-hand { justify-content:flex-start; padding-inline:16px; }
+}
