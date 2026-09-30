@@ -16,7 +16,8 @@
     "test:portfolio": "playwright test tests/portfolio/test-por-001.spec.ts",
     "test:portfolio:update": "playwright test tests/portfolio/test-por-001.spec.ts --update-snapshots",
     "check:docs": "node scripts/check-doc-lines.mjs",
-    "check:docs:staged": "node scripts/check-doc-lines.mjs --staged"
+    "check:docs:staged": "node scripts/check-doc-lines.mjs --staged",
+    "check:public-boundary": "node scripts/check-public-boundary.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",

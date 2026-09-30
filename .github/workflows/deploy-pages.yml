@@ -25,6 +25,7 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm check:public-boundary
       - run: pnpm build
         env:
           VITE_BASE_PATH: /${{ github.event.repository.name }}/
