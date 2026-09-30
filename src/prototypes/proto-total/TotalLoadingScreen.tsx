@@ -5,9 +5,9 @@ import LoadingTree from "./LoadingTree";
 import { siteIdentity } from "../../content/siteIdentity";
 import { Text } from '../../content-editor/Content';
 
-type Props = { presentation: LoadingPresentation; progress: number; onSkip: () => void; exiting: boolean; onExited: () => void };
+type Props = { failed?: number; onRetry?: () => void; presentation: LoadingPresentation; progress: number; onSkip: () => void; exiting: boolean; onExited: () => void };
 
-export default function TotalLoadingScreen({ presentation, progress, onSkip, exiting, onExited }: Props) {
+export default function TotalLoadingScreen({ failed = 0, onRetry, presentation, progress, onSkip, exiting, onExited }: Props) {
   const displayedProgress = useLoadingDisplayProgress(progress, presentation);
   const [foliage, setFoliage] = useState(0);
   const [skipped, setSkipped] = useState(false);
@@ -57,6 +57,7 @@ export default function TotalLoadingScreen({ presentation, progress, onSkip, exi
         </div>
         <h1><Text id="brand.studioName">{siteIdentity.studioName}</Text></h1>
         <p className="loading-poem"><Text id="loading.poem">빛이 머문 자리, 이야기가 자랍니다.</Text></p>
+        {failed > 0 && <div className="loading-error" role="alert"><p>사진 {failed}장을 불러오지 못했습니다.</p><button onClick={onRetry}>다시 불러오기</button></div>}
         <p className="loading-status" role="status"><Text id={`loading.stage.${displayedProgress < 35 ? 'start' : displayedProgress < 100 ? 'progress' : 'ready'}`}>{stage}</Text></p>
         <div className="loading-progress" role="progressbar" aria-label="사진 준비" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(displayedProgress)}>
           <span style={{ transform: `scaleX(${displayedProgress / 100})` }} />

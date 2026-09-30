@@ -1,3 +1,4 @@
+import ArchiveCollectionTabs from "./ArchiveCollectionTabs";
 import { Text, ContentImage } from '../../content-editor/Content';
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowUpRight, LoaderCircle } from "lucide-react";
@@ -16,13 +17,13 @@ type Props = {
 export default function TotalGalleryPage(props: Props) {
   const [displayed, setDisplayed] = useState(props.gallery);
   const [phase, setPhase] = useState<"idle" | "entering">("idle");
-  const switching = displayed.id !== props.gallery.id;
+  const switching = displayed !== props.gallery;
 
   useEffect(() => {
     let active = true;
     let timer = 0;
     setPhase("idle");
-    if (displayed.id === props.gallery.id) return;
+    if (displayed === props.gallery) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     // Prepare the destination before overlapping it with the current content.
     void Promise.all(props.gallery.photos.slice(0, TOTAL_GALLERY_PAGE_SIZE).map(preparePhoto))
@@ -52,11 +53,13 @@ function Gallery({
   switching,
   phase,
 }: Props & { selectedId: string; switching: boolean; phase: "idle" | "entering" }) {
+  const allCount = gallery.id === 'all' ? gallery.photos.length : concepts.reduce((count, concept) => count + concept.photos.length, 0);
+  const gallerySignature = `${gallery.id}:${gallery.photos.map(photo => photo.id).join(',')}`;
   const initialPhotos = (entry: TotalConcept) => {
     const batch = entry.photos.slice(0, TOTAL_GALLERY_PAGE_SIZE).map(getPreparedPhoto);
     return batch.every((photo): photo is PreparedPhoto => Boolean(photo)) ? batch : [];
   };
-  const [activeGallery, setActiveGallery] = useState(gallery.id);
+  const [activeGallery, setActiveGallery] = useState(gallerySignature);
   const [photos, setPhotos] = useState<PreparedPhoto[]>(() => initialPhotos(gallery));
   const [requestedCount, setRequestedCount] = useState(TOTAL_GALLERY_PAGE_SIZE);
   const [error, setError] = useState(false);
@@ -64,8 +67,8 @@ function Gallery({
   const [attempt, setAttempt] = useState(0);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   // Reset only the results, keeping the header, tabs and keyboard focus mounted.
-  if (activeGallery !== gallery.id) {
-    setActiveGallery(gallery.id);
+  if (activeGallery !== gallerySignature) {
+    setActiveGallery(gallerySignature);
     setPhotos(initialPhotos(gallery));
     setRequestedCount(TOTAL_GALLERY_PAGE_SIZE);
     setError(false);
@@ -124,25 +127,13 @@ function Gallery({
       <p className="eyebrow"><Text id="TotalGalleryPage.002" section="갤러리">{"THE ARCHIVE / SELECTED MOMENTS"}</Text></p>
       <h1>
         <Text id={`concept.${gallery.id}.en`} section="갤러리">{gallery.en}</Text>
-        <em><Text id={`concept.${gallery.id}.name`} section="갤러리">{gallery.name}</Text></em>
+        <em>{gallery.name}</em>
       </h1>
       </div>
       <p className="gallery-intro"><Text id={`concept.${gallery.id}.intro`} section="갤러리">{gallery.intro || "스쳐 가는 순간을 모아, 오래 머무는 장면으로."}</Text><span><Text id="TotalGalleryPage.003" section="갤러리">{"PHOTOGRAPHY BY SANGMOK"}</Text></span></p>
       </header>
       </GalleryCrossfade>
-      <div className="gallery-tabs">
-        <button aria-pressed={selectedId === "all"} onClick={() => onOpenGallery("all")}><Text id="TotalGalleryPage.004" section="갤러리">{"전체 작품 "}</Text><span>{concepts.reduce((count, concept) => count + concept.photos.length, 0)}</span>
-        </button>
-        {concepts.map((concept) => (
-          <button
-            aria-pressed={concept.id === selectedId}
-            key={concept.id}
-            onClick={() => onOpenGallery(concept.id)}
-          >
-            <Text id={`concept.${concept.id}.name`} section="갤러리">{concept.name}</Text> <span>{concept.photos.length}</span>
-          </button>
-        ))}
-      </div>
+      <ArchiveCollectionTabs collections={concepts} selectedId={selectedId} allCount={allCount} onSelect={onOpenGallery} />
       <GalleryCrossfade identity={gallery.id}>
       <div className="gallery-index" aria-hidden="true">
         <span><Text id="TotalGalleryPage.005" section="갤러리">{"INDEX / "}</Text><Text id={`concept.${gallery.id}.index`} section="갤러리">{gallery.id === "all" ? "ALL MOMENTS" : gallery.en.toUpperCase()}</Text></span>
@@ -174,7 +165,7 @@ function Gallery({
       </div>
       <div className="gallery-continuation" ref={loadMoreRef}>
         <p className="gallery-progress" role="status">{Math.min(visibleCount, gallery.photos.length)}<Text id="TotalGalleryPage.008" section="갤러리">{" / "}</Text>{gallery.photos.length}<Text id="TotalGalleryPage.009" section="갤러리">{"개의 기록"}</Text></p>
-        <span className="gallery-progress-line" aria-hidden="true"><span style={{ width: `${Math.min(visibleCount / gallery.photos.length, 1) * 100}%` }} /></span>
+        <span className="gallery-progress-line" aria-hidden="true"><span style={{ width: `${(gallery.photos.length ? Math.min(visibleCount / gallery.photos.length, 1) : 0) * 100}%` }} /></span>
         {loading ? (
           <p className="gallery-loading" aria-hidden="true"><LoaderCircle size={16} /><Text id="TotalGalleryPage.010" section="갤러리">{" 다음 장면을 불러오는 중"}</Text></p>
         ) : settling ? (

@@ -1,0 +1,53 @@
+/* Card typography and paper are shared by the visitor and curator surfaces. */
+.photo-card-back.photo-card-back {
+  box-sizing: border-box;
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0;
+  overflow: auto;
+  background: #f4f3ed;
+  color: #344239;
+  text-align: left;
+}
+.photo-card-back .photo-card-back-content {
+  padding: 9%;
+  margin-block: auto;
+  overflow-wrap: anywhere;
+}
+.photo-card-back .photo-card-back-content > .eyebrow {
+  margin: 0 0 22px;
+  font: 500 clamp(9px, 2.1cqi, 11px)/1.6 Inter, 'Noto Sans KR', sans-serif;
+  letter-spacing: .17em;
+  color: #526057;
+}
+.photo-card-back .photo-card-back-content h2 {
+  margin: 0 0 26px;
+  font: 400 clamp(20px, 5cqi, 27px)/1.6 Georgia, 'Noto Serif KR', serif;
+  letter-spacing: -.035em;
+}
+.photo-card-back .photo-card-back-content dl { margin: 0; }
+.photo-card-back .photo-card-back-content dt {
+  margin: 18px 0 6px;
+  color: #817c6f;
+  font: 500 clamp(9px, 1.9cqi, 10px)/1.5 Inter, sans-serif;
+  letter-spacing: .12em;
+}
+.photo-card-back .photo-card-back-content dd {
+  margin: 0;
+  white-space: pre-wrap;
+  font: 400 clamp(12px, 2.7cqi, 14px)/1.85 Inter, 'Noto Sans KR', sans-serif;
+}
+.photo-card-back .photo-card-back-content > .signature {
+  display: block;
+  margin: 34px 0 0;
+  color: #887c6c;
+  font: italic 400 clamp(26px, 7.5cqi, 40px)/1.3 Georgia, serif;
+}
+.photo-card-back .photo-card-back-content > small {
+  display: block;
+  margin-top: 18px;
+  color: #817c6f;
+  font: 10px/1.6 Inter, sans-serif;
+}

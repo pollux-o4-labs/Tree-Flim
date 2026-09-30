@@ -7,7 +7,7 @@
 .prototype-total .collection-modal .consultation-heading :is(.eyebrow,p) { color:var(--total-on-image); opacity:.75; }
 .prototype-total .collection-modal .consultation-heading > p:last-child { color:var(--total-on-image); }
 .prototype-total .collection-modal .dialog-close { background:transparent; color:var(--total-on-image); top:20px; right:24px; }
-.prototype-total .collection-modal .consultation-body { padding:0 48px 30px; scrollbar-width:thin; }
+.prototype-total .collection-modal .consultation-body { padding:0 48px 30px; }
 .prototype-total .collection-modal .panel-back { color:var(--total-on-image); margin:0; }
 .prototype-total .collection-modal .deck-instruction { color:var(--total-on-image); opacity:.7; }
 .prototype-total .collection-modal .deck-card { transform:none; transition:box-shadow var(--total-motion-feedback) var(--total-ease-feedback); border:0; border-radius:3px; padding:10px 10px 16px; box-shadow:0 16px 40px var(--total-backdrop); }

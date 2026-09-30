@@ -1,0 +1,22 @@
+/* Opt in without changing overflow, dimensions, or scroll behavior. */
+.ui-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--ui-scrollbar-thumb, var(--total-accent-line, #b4bcb0)) transparent;
+}
+.ui-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+.ui-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--ui-scrollbar-thumb, var(--total-accent-line, #b4bcb0));
+  border-radius: 4px;
+}
+@supports selector(::-webkit-scrollbar) {
+  .ui-scrollbar { scrollbar-width: auto; scrollbar-color: auto; }
+}
+/* Journal lists become horizontal carousels below this breakpoint. */
+@media (min-width: 641px) {
+  .ui-scrollbar-desktop { scrollbar-width: thin; scrollbar-color: #b4bcb0 transparent; }
+  .ui-scrollbar-desktop::-webkit-scrollbar { width: 4px; }
+  .ui-scrollbar-desktop::-webkit-scrollbar-thumb { background: #b4bcb0; border-radius: 4px; }
+  @supports selector(::-webkit-scrollbar) {
+    .ui-scrollbar-desktop { scrollbar-width: auto; scrollbar-color: auto; }
+  }
+}

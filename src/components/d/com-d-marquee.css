@@ -1,0 +1,27 @@
+.com-d .marquee-stage { position: relative; height: clamp(300px, 45svh, 390px); padding: 20px 3% 16px; overflow: hidden; background: #d8e1d1; border: 1px solid #a9b7a3; }
+.com-d .ribbon-heading { display: flex; justify-content: space-between; align-items: baseline; color: #63745f; font-size: 9px; letter-spacing: .14em; }
+.com-d .ribbon-heading strong { color: #3d513a; font: 16px var(--serif); letter-spacing: -.05em; font-weight: 400; }
+.com-d .ribbon-canvas { width: min(100%, 1120px); height: calc(100% - 42px); margin: 12px auto 0; display: flex; flex-direction: column; justify-content: space-between; gap: clamp(5px, 1vw, 10px); }
+.com-d .photo-ribbon { display: flex; align-items: center; justify-content: space-between; gap: clamp(7px, 1.4vw, 16px); min-height: 0; flex: 1; }
+.com-d .ribbon-1 { transform: translateX(-2%); }
+.com-d .ribbon-2 { transform: translateX(2%); }
+.com-d .ribbon-3 { transform: translateX(-1%); }
+.com-d .ribbon-photo { position: relative; width: 100%; height: 100%; min-height: 0; margin: 0; overflow: hidden; filter: none; opacity: 1; transition: filter 1.4s ease, opacity 1.4s ease, box-shadow 1.4s ease; }
+.com-d .ribbon-photo img { width: 100%; height: 100%; display: block; object-fit: contain; background: #c6d2c1; }
+.com-d .ribbon-photo figcaption { position: absolute; inset: auto 7px 8px; color: #fff; font: 13px var(--serif); text-shadow: 0 1px 10px #000; opacity: 0; transition: opacity 1.2s ease; }
+.com-d .reveal-stage.settled .ribbon-photo:not(.selected) { filter: blur(4px) saturate(.65); opacity: .28; }
+.com-d .reveal-stage.settled .ribbon-photo.selected { box-shadow: 0 0 0 2px #f4f7ef, 0 10px 24px #35442f55; }
+.com-d .reveal-stage.settled .ribbon-photo.selected figcaption { opacity: 1; }
+.com-d .ribbon-note { margin: 12px 0 0; text-align: center; color: #63745f; font-size: 10px; letter-spacing: .08em; }
+@media (max-width: 700px) {
+  .com-d .marquee-stage { height: clamp(270px, 40svh, 340px); padding: 14px 3% 12px; }
+  .com-d .ribbon-heading strong { font-size: 13px; }
+  .com-d .ribbon-canvas { height: calc(100% - 36px); gap: 4px; margin-top: 8px; }
+  .com-d .photo-ribbon { gap: 5px; }
+  .com-d .ribbon-1 { transform: translateX(-1%); }
+  .com-d .ribbon-2 { transform: translateX(1%); }
+  .com-d .ribbon-3 { transform: translateX(-.5%); }
+  .com-d .ribbon-photo figcaption { font-size: 9px; }
+  .com-d .ribbon-note { font-size: 8px; margin-top: 7px; }
+}
+@media (prefers-reduced-motion: reduce) { .com-d .ribbon-photo { transition: none; } }

@@ -1,4 +1,4 @@
-import { Text } from '../../content-editor/Content';
+import { Text, useContentValue, useContentReady } from '../../content-editor/Content';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
@@ -19,6 +19,8 @@ import { useTotalTheme } from "./useTotalTheme";
 import { getLoadingPresentation, rememberLoadingVisit } from "./totalLoadingVisit";
 import TotalLoadingScreen from "./TotalLoadingScreen";
 import { useTotalImagePreparation } from "./useTotalImagePreparation";
+import { buildPublishedCollections } from '../../content-editor/publishedArchive';
+import { usePublishedArchive } from '../../content-editor/usePublishedArchive';
 import "./total.css";
 import "./total-theme.css";
 import './total-news.css';
@@ -28,6 +30,8 @@ import '../../design-system/mobile-deck.css';
 import '../../design-system/card-scene.css';
 
 export default function PrototypeTotal() {
+  const contentValue = useContentValue();
+  const contentReady = useContentReady();
   const [editorPreview] = useState(() => window.parent !== window && new URLSearchParams(location.search).has('editor'));
   const editorIntro = editorPreview && new URLSearchParams(location.search).has('intro');
   const { isDark, toggleTheme } = useTotalTheme();
@@ -53,11 +57,13 @@ export default function PrototypeTotal() {
   const [search, setSearch] = useSearchParams();
   const category = search.get("gallery");
   const news = search.get('news');
+  const publishedArchive = usePublishedArchive();
   const childView = Boolean(category || news);
   const newsListScroll = useRef(0);
   const previousNews = useRef(news);
   const [loadingPresentation] = useState(() => getLoadingPresentation(category));
-  const preparation = useTotalImagePreparation(category, !editorPreview);
+  const archiveCollections = useMemo(() => buildPublishedCollections(publishedArchive.works, publishedArchive.categories, concepts), [publishedArchive]);
+  const preparation = useTotalImagePreparation(root, contentReady && publishedArchive.ready, !editorPreview);
   const [loadingVisible, setLoadingVisible] = useState(editorIntro || preparation.loading);
   const [pageEntering, setPageEntering] = useState(false);
   const [viewTransition, setViewTransition] = useState<"idle" | "leaving" | "entering">("idle");
@@ -81,9 +87,12 @@ export default function PrototypeTotal() {
     cancelAnimationFrame(sectionNavigationFrame.current);
     cancelTotalSectionNavigation();
   }, []);
-  const gallery = useMemo(() => category === "all"
-    ? { id: "all", en: "The Archive", name: "작가의 모든 작품", intro: "", photos: concepts.flatMap((concept) => concept.photos) }
-    : concepts.find((concept) => concept.id === category), [category]);
+  const gallery = useMemo(() => {
+    if (!category) return undefined;
+    const selectedCollection = archiveCollections.find(collection => collection.id === category);
+    if (category !== 'all' && selectedCollection) return selectedCollection;
+    return { id: 'all', en: 'The Archive', name: '작가의 모든 작품', intro: '', photos: archiveCollections.flatMap(collection => collection.photos) };
+  }, [category, archiveCollections]);
 
   // Retain visited story images across archive visits instead of recreating them.
   const [storyVisited, setStoryVisited] = useState(!gallery);
@@ -163,6 +172,13 @@ export default function PrototypeTotal() {
     setInquiry(label);
     inquiryDialog.current?.showModal();
   };
+  const editorPhoto = search.get('storyPhoto');
+  useEffect(() => {
+    if (!editorPreview || !editorPhoto) return;
+    const work = publishedArchive.works?.find(w => `archive-${w.id}` === editorPhoto);
+    const selected = work ? { id: `archive-${work.id}`, src: work.image, story: work.title, category: work.category, note: work.note, location: work.location } : concepts.flatMap(c => c.photos).find(p => p.id === editorPhoto);
+    if (selected) { setPhoto(selected); setFlipped(true); photoDialog.current?.showModal(); }
+  }, [editorPreview, editorPhoto, publishedArchive]);
   const editorPanel = search.get('panel');
   useEffect(() => {
     if (editorPreview && editorPanel && !loadingVisible) openInquiry(editorPanel);
@@ -196,7 +212,8 @@ export default function PrototypeTotal() {
 
   // Gallery is a child view of Total, so it keeps the same wheel-scroll policy.
   useTotalSmoothWheelScroll({ disabled: loadingVisible || viewTransition !== "idle" });
-  useTotalSceneProgress(root, transitionRef, category ?? (news ? 'news' : null), columnCount);
+  const sceneContentKey = `${contentReady && publishedArchive.ready}:${concepts.map(c => contentValue(`story.${c.id}.collection`, c.name)).join(',')}:${columnCount}:${archiveCollections.flatMap(c => c.photos).map(p => p.id).join(',')}:${concepts.flatMap(c => [0, 1, 2].map(i => contentValue(`story.${c.id}.${i}`, c.photos[i].id))).join(',')}`;
+  useTotalSceneProgress(root, transitionRef, category ?? (news ? 'news' : null), sceneContentKey);
   useDialogBodyLock(photoDialog, inquiryDialog);
 
   return (
@@ -207,7 +224,7 @@ export default function PrototypeTotal() {
       data-route-transition={viewTransition}
       data-loading-state={loadingVisible ? (preparation.loading ? "preparing" : "leaving") : pageEntering ? "leaving" : "ready"}
     >
-      {loadingVisible && <TotalLoadingScreen presentation={loadingPresentation} progress={preparation.progress} onSkip={editorIntro ? finishLoadingTransition : preparation.skip} exiting={!preparation.loading && !editorIntro} onExited={finishLoadingTransition} />}
+      {loadingVisible && <TotalLoadingScreen failed={preparation.failed} onRetry={preparation.retry} presentation={loadingPresentation} progress={preparation.progress} onSkip={editorIntro ? finishLoadingTransition : preparation.skip} exiting={!preparation.loading && !editorIntro} onExited={finishLoadingTransition} />}
       <div className="total-content" inert={loadingVisible || viewTransition !== "idle"} aria-busy={loadingVisible || viewTransition !== "idle"}>
       <header className="site-header">
         <SiteBrand />
@@ -220,20 +237,49 @@ export default function PrototypeTotal() {
           </button>
         </nav>
       </header>
-      {gallery && (
+      {gallery && (editorPreview || (contentReady && publishedArchive.ready)) && (
         <TotalGalleryPage
           gallery={gallery}
-          concepts={concepts}
+          concepts={archiveCollections}
           onOpenGallery={openGallery}
           onClose={closeGallery}
           onOpenPhoto={openPhoto}
         />
       )}
       {news && !gallery && <TotalNews selected={news} onOpen={openNews} onClose={closeGallery} onInquiry={openInquiry} />}
-      {storyVisited && (
+      {storyVisited && (editorPreview || (contentReady && publishedArchive.ready)) && (
         <main hidden={childView} inert={childView} className="total-story">
           <TotalStoryScenes
-            slots={slots}
+            chapters={concepts.map(c => {
+              const name = contentValue(`story.${c.id}.collection`, c.name);
+              const collection = archiveCollections.find(a => a.name === name);
+              return { ...c, name, en: collection?.en ?? 'Collection', intro: collection?.intro ?? '', photos: collection?.photos ?? [] };
+            })}
+            slots={slots.map((chapterSlots, chapterIndex) => {
+              let selection = 0;
+              const concept = concepts[chapterIndex];
+              const name = contentValue(`story.${concept.id}.collection`, concept.name);
+              const collection = archiveCollections.find(c => c.name === name);
+              const emphasized = [0, 1, 2].map(i => {
+                const id = contentValue(`story.${concept.id}.${i}`, concept.photos[i].id);
+                return id.startsWith('archive-') ? id : `archive-seed-${id}`;
+              });
+              const remaining = collection?.photos.filter(p => !emphasized.includes(p.id)) ?? [];
+              const backgrounds = remaining.length ? remaining : collection?.photos ?? [];
+              let background = 0;
+              return chapterSlots.map(slot => {
+                if (!slot.featured) {
+                  const photo = backgrounds[background++ % (backgrounds.length || 1)];
+                  return photo ? { ...slot, photo } : null;
+                }
+                const index = selection++;
+                const selectedId = contentValue(`story.${concept.id}.${index}`, concept.photos[index].id);
+                const canonicalId = selectedId.startsWith('archive-') ? selectedId : `archive-seed-${selectedId}`;
+                const selected = collection?.photos.find(p => p.id === canonicalId);
+                // Unpublished or deleted works must never remain featured.
+                return selected ? { ...slot, photo: selected } : null;
+              }).filter((slot): slot is NonNullable<typeof slot> => slot !== null);
+            })}
             transitionRef={transitionRef}
             onOpenGallery={openGallery}
             onOpenPhoto={openPhoto}

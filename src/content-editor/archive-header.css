@@ -1,0 +1,52 @@
+/* Shared archive chrome: one scale and action hierarchy across editing screens. */
+.archive-manager > .editor-header,
+.story-manager > .editor-header {
+  position: relative; z-index: 12; display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto; align-items: center;
+  height: 72px; min-height: 72px; gap: 28px; padding: 0 24px;
+  border-bottom: 1px solid #dfd8cb; background: #f6f2e9; box-sizing: border-box;
+}
+.editor-header .editor-header-back { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #59685e; font-size: 12px; text-decoration: none; white-space: nowrap; }
+.editor-header-identity { display: flex; min-width: 0; align-items: baseline; gap: 10px; }
+.editor-header-identity small { color: #758076; font-size: 9px; letter-spacing: .12em; }
+.editor-header-identity strong { color: #3f4a42; font: 500 22px/1.3 Georgia, 'Noto Serif KR', serif; white-space: nowrap; }
+.editor-header-identity em { color: #758076; font-size: 11px; font-style: normal; }
+.editor-header-actions { display: flex; align-items: center; gap: 8px; }
+.editor-header .editor-header-status { margin: 0 6px 0 0; color: #6b756c; font-size: 11px; white-space: nowrap; }
+.editor-header .editor-header-status.is-dirty { color: #8a6943; }
+.editor-header .editor-header-actions > button,
+.editor-header .editor-header-actions > a,
+.editor-header .archive-add-menu > button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  min-height: 44px; padding: 10px 14px; border: 1px solid #d8d1c4;
+  border-radius: 3px; background: transparent; color: #3f4a42;
+  font: 400 12px/1.4 Inter, 'Noto Sans KR', sans-serif; white-space: nowrap;
+  text-decoration: none; box-sizing: border-box;
+}
+.editor-header .editor-header-actions > button.primary,
+.editor-header .archive-add-menu > button.archive-primary { border-color: #315f45; background: #315f45; color: #fff; }
+.editor-header .editor-header-actions > button:not(.primary):hover,
+.editor-header .editor-header-actions > a:hover { background: #e8ece2; }
+.editor-header :focus-visible { outline: 2px solid #315f45; outline-offset: 3px; }
+@media (max-width: 900px) {
+  .archive-manager > .editor-header, .story-manager > .editor-header { gap: 14px; padding-inline: 18px; }
+  .editor-header-identity small, .editor-header-identity em { display: none; }
+  .editor-header .editor-header-status { font-size: 10px; }
+}
+@media (max-width: 680px) {
+  .archive-manager > .editor-header, .story-manager > .editor-header {
+    grid-template-columns: auto minmax(0, 1fr); height: 112px; min-height: 112px;
+    gap: 0 12px; padding: 8px 14px; align-content: center;
+  }
+  .editor-header-identity { justify-content: flex-end; }
+  .editor-header-identity strong { font-size: 18px; }
+  .editor-header .editor-header-back { font-size: 11px; }
+  .editor-header-actions { grid-column: 1 / -1; justify-content: flex-end; gap: 6px; }
+  .editor-header .editor-header-status { margin-right: auto; font-size: 10px; white-space: normal; max-width: 100px; }
+  .editor-header .editor-header-actions > button,
+  .editor-header .editor-header-actions > a,
+  .editor-header .archive-add-menu > button { padding-inline: 10px; font-size: 11px; }
+  main.archive-manager > .archive-workspace { height: calc(100dvh - 176px); }
+  .archive-detail.open { top: 112px; }
+}
+@media (max-width: 599px) { .archive-detail.open { top: 0; } }

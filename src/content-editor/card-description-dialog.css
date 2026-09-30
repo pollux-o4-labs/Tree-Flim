@@ -1,0 +1,19 @@
+.story-card-dialog {
+  position: fixed; inset: 0; margin: auto; width: min(460px, 90vw);
+  max-width: none; max-height: 95svh; padding: 0; border: 0;
+  background: transparent; color: #344239; overflow: visible;
+}
+.story-card-dialog::backdrop { background: #142019bb; backdrop-filter: blur(8px); }
+.story-manager .story-card-close {
+  position: absolute; z-index: 4; right: -14px; top: 0; display: grid; place-items: center;
+  width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: #f4f3ed; color: #344239;
+}
+.story-manager .story-card-dialog .flip-button { border: 0; padding: 0; background: transparent; color: #f4f3ed; }
+.story-card-edit-hint { margin: 8px 0 0; color: #f4f3ed; font-size: 11px !important; line-height: 1.6 !important; }
+.story-card-dialog .photo-card-back input, .story-card-dialog .photo-card-back textarea {
+  display: block; box-sizing: border-box; width: 100%; min-width: 0; padding: 2px 0;
+  border: 0; border-bottom: 1px solid #d8d1c4; border-radius: 0; background: transparent;
+  color: inherit; font: inherit; letter-spacing: inherit;
+}
+.story-card-dialog .photo-card-back textarea { resize: vertical; }
+.story-card-dialog .photo-card-back :focus-visible { outline: 2px solid #315f45; outline-offset: 3px; }

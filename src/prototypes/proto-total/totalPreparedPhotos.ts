@@ -1,3 +1,4 @@
+import { imagePreviewUrl, imageOriginalUrl } from '../../shared/imagePreview';
 import type { Photo } from "../../content/prototype-fixture";
 
 export type PreparedPhoto = Photo & { width: number; height: number };
@@ -31,7 +32,15 @@ export async function preparePhoto(photo: Photo): Promise<PreparedPhoto> {
         finally { finish(); }
       };
       image.onerror = () => { finish(); reject(new Error("Image load failed")); };
-      image.src = photo.src;
+      const original = imageOriginalUrl(photo.src);
+      const preview = imagePreviewUrl(photo.src);
+      image.onerror = () => {
+        if (image.src === preview && preview !== original) {
+          image.onerror = () => { finish(); reject(new Error("Image load failed")); };
+          image.src = original;
+        } else { finish(); reject(new Error("Image load failed")); }
+      };
+      image.src = preview;
     }).finally(() => pending.delete(photo.src));
     pending.set(photo.src, request);
   }

@@ -443,95 +443,6 @@ html:has(.prototype-total)::-webkit-scrollbar {
   right: -14px;
   top: 0;
 }
-.prototype-total .photo-dialog-content {
-  text-align: center;
-  padding: 10px 15px;
-}
-.prototype-total .photo-dialog-content > .eyebrow {
-  color: var(--total-on-image);
-  margin: 0 0 15px;
-}
-.prototype-total .card-perspective {
-  perspective: 1200px;
-  --rx: 0deg;
-  --ry: 0deg;
-}
-.prototype-total .photo-card {
-  position: relative;
-  height: min(64svh, 560px);
-  transform-style: preserve-3d;
-  transition: transform 0.7s;
-  transform: rotateX(var(--rx)) rotateY(var(--ry));
-}
-.prototype-total .photo-card.is-flipped {
-  transform: rotateX(var(--rx)) rotateY(calc(180deg + var(--ry)));
-}
-.prototype-total .card-front,
-.prototype-total .card-back {
-  position: absolute;
-  inset: 0;
-  background: var(--total-dialog-surface);
-  backface-visibility: hidden;
-  box-shadow: 0 25px 50px #0004;
-  padding: 16px;
-}
-.prototype-total .card-front img {
-  width: 100%;
-  height: calc(100% - 35px);
-  object-fit: contain;
-  background: var(--total-image-surface);
-}
-.prototype-total .card-front > span {
-  position: absolute;
-  top: 70%;
-  left: 10%;
-  right: 10%;
-  color: white;
-  font: 21px/1.8 var(--serif);
-  text-shadow: 0 1px 8px #0009;
-}
-.prototype-total .card-front small {
-  display: block;
-  padding-top: 15px;
-  font-size: 8px;
-  letter-spacing: 0.13em;
-}
-.prototype-total .card-back {
-  transform: rotateY(180deg);
-  text-align: left;
-  padding: 35px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-.prototype-total .card-back h2 {
-  font: 22px/1.8 var(--serif);
-  margin: 25px 0;
-}
-.prototype-total .card-back dt {
-  font-size: 8px;
-  letter-spacing: 0.1em;
-  color: var(--total-subtle);
-  margin: 16px 0 6px;
-}
-.prototype-total .card-back dd {
-  font-size: 12px;
-  line-height: 1.8;
-  margin: 0;
-}
-.prototype-total .card-back small {
-  font-size: 9px;
-  margin-top: 15px;
-  color: var(--total-subtle);
-}
-.prototype-total .flip-button {
-  display: inline-flex;
-  gap: 12px;
-  align-items: center;
-  color: var(--total-on-image);
-  margin-top: 22px;
-  font-size: 12px;
-}
 .prototype-total .inquiry-dialog {
   background: var(--total-paper);
   padding: 45px;
@@ -865,16 +776,6 @@ html:has(.prototype-total)::-webkit-scrollbar {
   }
   .prototype-total .inquiry-dialog {
     padding: 35px 24px;
-  }
-  .prototype-total .card-back {
-    padding: 25px;
-  }
-  .prototype-total .card-back h2 {
-    font-size: 18px;
-    margin: 12px 0;
-  }
-  .prototype-total .card-back dt {
-    margin-top: 10px;
   }
   .prototype-total .gallery-page { padding: 32px 6% 56px; }
   .prototype-total .gallery-heading { display: block; margin-bottom: 30px; }
@@ -1419,3 +1320,4 @@ html:has(.prototype-total)::-webkit-scrollbar {
 @media (prefers-reduced-motion: reduce) {
   .prototype-total .gallery-fetch-feedback svg { animation: none; }
 }
+.total-loading .loading-error{margin:12px 0;color:var(--total-ink,#384638);font-size:13px;text-align:center}.total-loading .loading-error button{min-height:44px;padding:8px 18px;border:1px solid currentColor;border-radius:24px;background:transparent;color:inherit;cursor:pointer}.total-loading .loading-error button:focus-visible{outline:2px solid currentColor;outline-offset:4px}

@@ -7,7 +7,7 @@ export function useTotalSceneProgress(
   root: RefObject<HTMLDivElement | null>,
   transition: RefObject<HTMLElement | null>,
   category: string | null,
-  layoutKey: number,
+  layoutKey: number | string,
 ) {
   useTotalAutoTransitionProgress({ transition, category });
   useTotalRevealProgress(root, category, layoutKey);

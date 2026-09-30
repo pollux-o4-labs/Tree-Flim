@@ -1,0 +1,104 @@
+import { test, expect } from '@playwright/test';
+import { readFileSync } from 'node:fs';
+const credentials = JSON.parse(readFileSync(process.env.E2E_CREDENTIALS_FILE!, 'utf8'));
+test('external visitor and administrator publish cycle', async ({ page, context, baseURL }) => {
+  const errors: string[] = [];
+
+  page.on('pageerror', e => { errors.push(e.message); console.log('RUNTIME:', e.message); });
+  await page.goto(baseURL + 'admin/content/archive/featured');
+  await expect(page.getByRole('button', { name: '로그인', exact: true })).toBeEnabled();
+  await page.getByLabel('이메일', { exact: true }).fill(credentials.email);
+  await page.getByLabel('비밀번호', { exact: true }).fill(credentials.password);
+  await page.getByRole('button', { name: '로그인', exact: true }).click();
+  await expect(page.getByRole('button', { name: '강조 사진 1 카드 열기' })).toBeEnabled({ timeout: 30000 });
+  for (const width of [390, 768, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.screenshot({ path: `/tmp/treefilm-admin-${width}.png` });
+  }
+  await page.getByRole('button', { name: '강조 사진 1 카드 열기' }).click();
+  await page.getByRole('button', { name: '뒤집어서 내용 편집' }).click();
+  const title = page.getByRole('textbox', { name: '강조 사진 1 제목', exact: true });
+  const original = await title.inputValue();
+  const marker = original + ' · E2E';
+  await title.fill(marker);
+  await page.getByRole('button', { name: '사진 닫기', exact: true }).click();
+  await page.getByRole('button', { name: '초안 저장', exact: true }).click();
+  await expect(page.getByText('선택을 초안으로 저장했습니다. 공개 적용 전까지 방문객 화면은 바뀌지 않습니다.', { exact: true })).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole('button', { name: '강조 사진 1 카드 열기' })).toBeEnabled();
+  await expect(page.getByText(marker, { exact: true }).first()).toBeVisible();
+  const visitor = await context.browser()!.newContext();
+  const publicPage = await visitor.newPage();
+  await publicPage.goto(baseURL!);
+  await expect(publicPage.getByText(marker, { exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: '강조 사진 공개 적용', exact: true }).click();
+  await expect(page.locator('.story-save-bar')).toHaveCount(0);
+  await publicPage.reload();
+  await expect(publicPage.getByText(marker, { exact: true }).first()).toBeAttached({ timeout: 30000 });
+  await page.getByRole('button', { name: '강조 사진 1 카드 열기' }).click();
+  await page.getByRole('button', { name: '뒤집어서 내용 편집' }).click();
+  await title.fill(original);
+  await page.getByRole('button', { name: '사진 닫기', exact: true }).click();
+  await page.getByRole('button', { name: '강조 사진 공개 적용', exact: true }).click();
+  await expect(page.locator('.story-save-bar')).toHaveCount(0);
+  await publicPage.reload();
+  await expect(publicPage.getByText(marker, { exact: true })).toHaveCount(0);
+  const skip = publicPage.getByRole('button', { name: '먼저 둘러보기' });
+  if (await skip.isVisible()) await skip.click();
+  await expect(publicPage.locator('.total-loading')).toHaveCount(0, { timeout: 30000 });
+  await expect(publicPage.locator('.scene-photo').first()).toBeVisible({ timeout: 30000 });
+  await expect(publicPage.locator('.scene-photo img').first()).toHaveJSProperty('complete', true);
+  for (const width of [390, 768, 1440]) {
+    await publicPage.setViewportSize({ width, height: 900 });
+    expect(await publicPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await publicPage.screenshot({ path: `/tmp/treefilm-visitor-${width}.png` });
+  }
+  await visitor.close();
+  expect(errors).toEqual([]);
+});
+test('anonymous access is limited to published data', async ({ request }) => {
+ const base = 'https://firestore.googleapis.com/v1/projects/treefilm-eb71e/databases/(default)/documents/sites/treefilm/';
+ const publicResponse = await request.get(base + 'public/workspace');
+ expect(publicResponse.status()).toBe(200);
+ const data = await publicResponse.json();
+ expect(data.fields.draft).toBeUndefined();
+ expect(data.fields.archiveDraft).toBeUndefined();
+ expect((await request.get(base + 'drafts/workspace')).status()).toBe(403);
+ expect((await request.patch(base + 'public/workspace', { data: { fields: {} } })).status()).toBe(403);
+});
+test('public Drive folders are fetched without an image proxy', async ({ request, baseURL }) => {
+ const source = readFileSync('src/content-editor/publicDrive.ts', 'utf8');
+ const key = source.match(/const publicDriveKey = "([^"]+)"/)![1];
+ const params = new URLSearchParams({ key, q: "'1tiUDodIFps2SriCOHjht8JQKzUYYJo8g' in parents and trashed = false", fields: 'files(id,name,mimeType)' });
+ const response = await request.get('https://www.googleapis.com/drive/v3/files?' + params, { headers: { Referer: baseURL! } });
+ expect(response.status()).toBe(200);
+ expect((await response.json()).files.length).toBeGreaterThan(0);
+ const photos = new URLSearchParams({ key, q: "'1nYgpt4U_Z1VZGAMR6pb5UJl9qRz_fgxc' in parents and trashed = false", fields: 'files(id,mimeType)' });
+ const photoResponse = await request.get('https://www.googleapis.com/drive/v3/files?' + photos, { headers: { Referer: baseURL! } });
+ expect(photoResponse.status()).toBe(200);
+ const image = (await photoResponse.json()).files.find((file: { mimeType: string }) => file.mimeType.startsWith('image/'));
+ expect(image).toBeTruthy();
+ const thumbnail = await request.get(`https://drive.google.com/thumbnail?id=${image.id}&sz=w320`);
+ const original = await request.get(`https://lh3.googleusercontent.com/d/${image.id}=s0`);
+ expect(thumbnail.status()).toBe(200);
+ expect(original.status()).toBe(200);
+ expect(original.headers()['content-type']).toContain('image/');
+ expect((await thumbnail.body()).length).toBeLessThan((await original.body()).length);
+});
+test('administrator screen editor loads its portfolio preview', async ({ page, baseURL }) => {
+ const errors: string[] = [];
+ page.on('pageerror', e => errors.push(e.message));
+ await page.goto(baseURL + 'admin');
+ await page.getByLabel('이메일', { exact: true }).fill(credentials.email);
+ await page.getByLabel('비밀번호', { exact: true }).fill(credentials.password + '-invalid');
+ await page.getByRole('button', { name: '로그인', exact: true }).click();
+ await expect(page.getByRole('alert')).toHaveText('이메일 또는 비밀번호를 확인해 주세요.');
+ await page.getByLabel('비밀번호', { exact: true }).fill(credentials.password);
+ await page.getByRole('button', { name: '로그인', exact: true }).click();
+ await expect(page.locator('iframe')).toBeVisible({ timeout: 30000 });
+ await expect(page.frameLocator('iframe').locator('.total-content')).toBeAttached();
+ await expect(page.frameLocator('iframe').locator('[data-content-id]').first()).toBeAttached();
+ await page.screenshot({ path: '/tmp/treefilm-screen-editor.png' });
+ expect(errors).toEqual([]);
+});

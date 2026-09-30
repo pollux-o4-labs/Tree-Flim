@@ -41,7 +41,7 @@ const syncSceneFocus = (element: Element) => {
 export function useTotalRevealProgress(
   root: RefObject<HTMLDivElement | null>,
   category: string | null,
-  layoutKey: number,
+  layoutKey: number | string,
 ) {
   useEffect(() => {
     if (category) return;

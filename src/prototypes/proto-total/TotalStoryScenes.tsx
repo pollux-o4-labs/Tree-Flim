@@ -6,6 +6,7 @@ import { siteIdentity } from "../../content/siteIdentity";
 import type { OpenPhoto, TotalSlot } from "./totalTypes";
 
 type Props = {
+  chapters: typeof concepts;
   slots: readonly (readonly TotalSlot[])[];
   transitionRef: RefObject<HTMLElement | null>;
   onOpenGallery: (id: string) => void;
@@ -43,22 +44,22 @@ function Hero() {
   );
 }
 
-function StoryScenes({ slots, onOpenPhoto }: Pick<Props, "slots" | "onOpenPhoto">) {
+function StoryScenes({ slots, onOpenPhoto, chapters }: Pick<Props, "slots" | "onOpenPhoto" | "chapters">) {
   return (
     <div id="stories">
-      {concepts.map((concept, conceptIndex) => (
-        <section className="story-scene" key={concept.id}>
+      {chapters.map((concept, conceptIndex) => (
+        <section className="story-scene" key={concept.id} data-chapter-id={concept.id}>
           <div className="scene-heading reveal">
-            <span className="eyebrow"><Text id="TotalStoryScenes.012" section="메인 · 작업">{"CHAPTER 0"}</Text>{conceptIndex + 1}<Text id="TotalStoryScenes.013" section="메인 · 작업">{" / "}</Text><Text id={`concept.${concept.id}.en`} section="작업">{concept.en.toUpperCase()}</Text>
+            <span className="eyebrow"><Text id="TotalStoryScenes.012" section="메인 · 작업">{"CHAPTER 0"}</Text>{conceptIndex + 1}<Text id="TotalStoryScenes.013" section="메인 · 작업">{" / "}</Text><Text id={`concept.${concepts.find(c => c.name === concept.name)?.id ?? encodeURIComponent(concept.name)}.en`} section="작업">{concept.en.toUpperCase()}</Text>
             </span>
             <h2>
-              <Text id={`concept.${concept.id}.name`} section="메인 · 작업">{concept.name}</Text>
+              <Text id={`concept.${concepts.find(c => c.name === concept.name)?.id ?? encodeURIComponent(concept.name)}.name`} section="메인 · 작업">{concept.name}</Text>
               <span><Text id="TotalStoryScenes.014" section="메인 · 작업">{"."}</Text></span>
             </h2>
-            <p><Text id={`concept.${concept.id}.intro`} section="메인 · 작업">{concept.intro}</Text></p>
+            <p><Text id={`concept.${concepts.find(c => c.name === concept.name)?.id ?? encodeURIComponent(concept.name)}.intro`} section="메인 · 작업">{concept.intro}</Text></p>
           </div>
           <div className="photo-field">
-            {slots[conceptIndex].map(({ photo, featured }, index) => (
+            {slots[concepts.findIndex(c => c.id === concept.id)].map(({ photo, featured }, index) => (
               <button
                 key={index}
                 data-slot={index}
@@ -72,7 +73,7 @@ function StoryScenes({ slots, onOpenPhoto }: Pick<Props, "slots" | "onOpenPhoto"
                     "--slot": index,
                     "--turn": ((index * 7) % 11) - 5 + "deg",
                     "--delay": featured
-                      ? slots[conceptIndex]
+                      ? slots[concepts.findIndex(c => c.id === concept.id)]
                           .slice(0, index)
                           .filter((slot) => slot.featured).length *
                           0.14 +
@@ -82,7 +83,7 @@ function StoryScenes({ slots, onOpenPhoto }: Pick<Props, "slots" | "onOpenPhoto"
                 }
                 onClick={() => featured && onOpenPhoto(photo)}
               >
-                <ContentImage field={`photo.${photo.id}.src`} section="메인 · 작업" src={photo.src} alt={featured ? photo.story : ""} loading="eager" decoding="async" />
+                <ContentImage field={`photo.${photo.id}.src`} section="메인 · 작업" src={photo.src} alt={featured ? photo.story : ""} fetchPriority={featured ? "high" : "low"} loading={featured ? "eager" : "lazy"} decoding="async" />
                 {featured && (
                   <>
                     <span className="photo-story"><Text id={`photo.${photo.id}.story`} section="메인 · 작업">{photo.story}</Text></span>
@@ -102,7 +103,7 @@ function StoryScenes({ slots, onOpenPhoto }: Pick<Props, "slots" | "onOpenPhoto"
   );
 }
 
-function Gather({ onOpenGallery, transitionRef }: Pick<Props, "onOpenGallery" | "transitionRef">) {
+function Gather({ onOpenGallery, transitionRef, chapters }: Pick<Props, "onOpenGallery" | "transitionRef" | "chapters">) {
   return (
     <section className="transition gather" ref={transitionRef} id="showcase">
       <div className="transition-sticky">
@@ -120,13 +121,13 @@ function Gather({ onOpenGallery, transitionRef }: Pick<Props, "onOpenGallery" | 
           </button>
         </div>
         <div className="gather-images">
-          {concepts.flatMap((concept, conceptIndex) =>
+          {chapters.flatMap((concept, conceptIndex) =>
             concept.photos.slice(3, 7).map((photo, photoIndex) => (
               <ContentImage field={`photo.${photo.id}.src`} section="메인 · 작업"
-                key={photo.id}
+                key={`${conceptIndex}-${photo.id}`}
                 src={photo.src}
                 alt=""
-                loading="eager" decoding="async"
+                loading="lazy" decoding="async"
                 style={
                   {
                     "--group": conceptIndex,
@@ -140,12 +141,12 @@ function Gather({ onOpenGallery, transitionRef }: Pick<Props, "onOpenGallery" | 
           )}
         </div>
         <div className="gather-categories">
-          {concepts.map((concept, index) => (
-            <button key={concept.id} onClick={() => onOpenGallery(concept.id)}>
+          {chapters.map((concept, index) => (
+            <button key={concept.id} onClick={() => onOpenGallery(concepts.find(c => c.name === concept.name)?.id ?? `collection-${encodeURIComponent(concept.name)}`)}>
               <span><Text id="TotalStoryScenes.027" section="메인 · 작업">{"0"}</Text>{index + 1}</span>
-              <h3><Text id={`concept.${concept.id}.en`} section="메인 · 작업">{concept.en}</Text></h3>
+              <h3><Text id={`concept.${concepts.find(c => c.name === concept.name)?.id ?? encodeURIComponent(concept.name)}.en`} section="메인 · 작업">{concept.en}</Text></h3>
               <p>
-                <Text id={`concept.${concept.id}.name`} section="메인 · 작업">{concept.name}</Text> <ArrowUpRight size={18} />
+                <Text id={`concept.${concepts.find(c => c.name === concept.name)?.id ?? encodeURIComponent(concept.name)}.name`} section="메인 · 작업">{concept.name}</Text> <ArrowUpRight size={18} />
               </p>
             </button>
           ))}
@@ -156,11 +157,13 @@ function Gather({ onOpenGallery, transitionRef }: Pick<Props, "onOpenGallery" | 
 }
 
 export default function TotalStoryScenes(props: Props) {
+  const chapters = props.chapters;
   return (
     <>
       <Hero />
-      <StoryScenes slots={props.slots} onOpenPhoto={props.onOpenPhoto} />
+      <StoryScenes chapters={chapters} slots={props.slots} onOpenPhoto={props.onOpenPhoto} />
       <Gather
+        chapters={chapters}
         onOpenGallery={props.onOpenGallery}
         transitionRef={props.transitionRef}
       />

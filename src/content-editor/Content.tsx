@@ -1,10 +1,14 @@
+import PreviewImage from '../shared/PreviewImage';
 import { createContext, createElement, useContext, useEffect, useMemo, useRef, useState, type ImgHTMLAttributes, type TextareaHTMLAttributes, type ReactNode } from 'react';
-import { readWorkspace } from './repository';
+import { readWorkspace, WORKSPACE_UPDATED } from './repository';
 import { safeMediaUrl, validValues, type ContentField, type Values } from './model';
 import './content.css';
 
-type Context = { values: Values; preview: boolean; editing: boolean; register: (field: ContentField) => void };
+type Context = { ready: boolean; values: Values; preview: boolean; editing: boolean; register: (field: ContentField) => void };
 const ContentContext = createContext<Context | null>(null);
+export function useContentReady() {
+  return useContext(ContentContext)?.ready ?? true;
+}
 export function useContentEditing() {
   const context = useContext(ContentContext);
   return Boolean(context?.preview && context.editing);
@@ -15,22 +19,30 @@ export function useContentValue() {
 }
 export function ContentProvider({ children }: { children: ReactNode }) {
   const [preview] = useState(() => window.parent !== window && new URLSearchParams(location.search).has('editor'));
+  const [ready, setReady] = useState(false);
   const [values, setValues] = useState<Values>({});
   const fields = useRef(new Map<string, ContentField>());
   const [editing, setEditing] = useState(true);
   const send = (message: object) => window.parent.postMessage({ source: 'tree-film-preview', ...message }, location.origin);
-  const context = useMemo<Context>(() => ({ values, preview, editing, register(field) {
+  const context = useMemo<Context>(() => ({ ready, values, preview, editing, register(field) {
     const before = fields.current.get(field.id);
     if (JSON.stringify(before) === JSON.stringify(field)) return;
     fields.current.set(field.id, field);
     if (preview) send({ type: 'field', field });
-  } }), [values, preview, editing]);
+  } }), [ready, values, preview, editing]);
   useEffect(() => {
-    if (!preview) { void readWorkspace().then(w => setValues(w.published)).catch(() => undefined); return; }
+    if (!preview) {
+      let active = true;
+      const refresh = () => { void readWorkspace().then(w => { if (active) { setValues(w.published); setReady(true); } }).catch(() => { if (active) setReady(true); }); };
+      refresh();
+      window.addEventListener(WORKSPACE_UPDATED, refresh);
+      window.addEventListener('focus', refresh);
+      return () => { active = false; window.removeEventListener(WORKSPACE_UPDATED, refresh); window.removeEventListener('focus', refresh); };
+    }
     const receive = (event: MessageEvent) => {
       if (event.origin !== location.origin || event.source !== window.parent || event.data?.source !== 'tree-film-editor') return;
       const data = event.data;
-      if (data.type === 'sync' && validValues(data.values)) { setValues(data.values); setEditing(data.editing === true); }
+      if (data.type === 'sync' && validValues(data.values)) { setValues(data.values); setReady(true); setEditing(data.editing === true); }
       if (data.type === 'request-fields') fields.current.forEach(field => send({ type: 'field', field }));
       if (data.type === 'focus' && typeof data.id === 'string') {
         const node = Array.from(document.querySelectorAll<HTMLElement>(`[data-content-id="${CSS.escape(data.id)}"]`))
@@ -78,10 +90,10 @@ export function Text({ id, children, section = '페이지 문구', label }: { id
   return context.preview ? createElement('content-text', { className: 'content-text', 'data-content-id': id, 'data-content-empty': value.trim() ? undefined : 'true' }, value) : <>{value}</>;
 }
 
-export function ContentImage({ field, section = '사진', ...props }: ImgHTMLAttributes<HTMLImageElement> & { field: string; section?: string }) {
+export function ContentImage({ field, section = '사진', ...props }: ImgHTMLAttributes<HTMLImageElement> & { field: string; section?: string; previewWidth?: number | null }) {
   const { value, context } = useField({ id: field, kind: 'image', original: props.src ?? '', label: props.alt || '사진', section, alt: props.alt ?? '' });
   const src = safeMediaUrl(value, true) ? value : props.src;
-  return <img {...props} src={context ? src : props.src} alt={context?.values[field + '.alt'] ?? props.alt} data-content-id={context?.preview ? field : undefined} />;
+  return <PreviewImage {...props} src={context ? src : props.src} alt={context?.values[field + '.alt'] ?? props.alt} data-content-id={context?.preview ? field : undefined} />;
 }
 
 export function ContentTextarea({ field, ...props }: TextareaHTMLAttributes<HTMLTextAreaElement> & { field: string }) {

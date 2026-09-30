@@ -1,38 +1,24 @@
 # TREE FILM Web
 
-정식 사용자 경로는 `/`이며 `/admin`은 개발 환경의 로컬 편집 데모다. GitHub Pages는 이 저장소만 배포한다.
+## 운영
 
-## 준비된 범위
+- 사용자 경로:
+  - `/`는 공개 포트폴리오, `/admin`은 이메일·비밀번호 관리자 로그인이다.
+  - Firebase Auth의 admin claim과 Firestore 서버 규칙으로 편집 권한을 확인한다.
+- 데이터:
+  - 초안과 발행본은 Firestore에 저장한다. 공개 이미지 URL은 외부 제공자가 전송한다.
+  - Firebase 웹 설정과 공개 Drive 브라우저 키는 공개 설정이다. 비밀번호·서비스 계정·DB 규칙은 포함하지 않는다.
+  - 로컬 데모의 IndexedDB 데이터는 자동으로 업로드하지 않는다. 기존 화면에서 초안을 내보내고 운영 편집기에서 가져온다.
 
-- 운영 빌드는 방문객 사이트만 제공하며, 관리자 편집기는 실제 인증 연결 전까지 개발 환경에서만 사용할 수 있다.
-- GitHub Pages 프로젝트 URL의 새로고침(`/admin`)을 위한 404 fallback이 포함되어 있다.
-- Firebase 웹 설정값을 넣을 `.env.example`이 있다. 이 값은 비밀이 아니며, 서비스 계정 키는 절대 이 저장소에 넣지 않는다.
-- 현재 편집 저장소는 로컬 브라우저 IndexedDB다. Firebase 어댑터는 body 레포의 보안 규칙과 함께 연결한다.
+## 실행과 검증
 
-## 첫 연결
-
-GitHub에서 빈 공개 레포 `tree-film-web`을 만든 뒤 아래 한 줄을 실행한다.
-
-```bash
-./scripts/connect-web.sh git@github.com:YOUR_ACCOUNT/tree-film-web.git
-```
-
-GitHub Pages 설정에서 Source를 `GitHub Actions`로 선택한다. 커스텀 도메인을 연결할 때는 workflow의 `VITE_BASE_PATH`를 `/`로 바꾼다.
-
-## 로컬 실행
-
-```bash
-mise install
-mise run dev
-```
-
-`mise.toml`은 Node 22.23.3을 고정하고, `package.json`의 pnpm 11.19.0을 Corepack으로 실행한다.
-
-## 공개 코드 경계
-
-- 프론트 범위:
-  - 방문객·관리자 UI와 공개 Firebase 웹 설정만 포함한다. 서버·DB 보안 규칙·Admin SDK·서비스 계정은 body에서 관리한다.
-  - 현재 IndexedDB 편집기는 로컬 데모이며 실제 관리자 인증이나 서버 데이터 접근 권한을 제공하지 않는다. 운영 연결에는 Firebase Auth와 body의 admin claim 검증이 필요하다.
-- 내보내기 검사:
-  - `pnpm check:public-boundary`는 HEAD의 추적 파일을 검사하며, 미커밋 파일·전체 Git 이력·외부 Secret 저장소는 검사하지 않는다.
-  - `.env.example`에는 공개 설정의 빈 자리만 두며, 비밀번호·비밀 키는 프론트에 넣지 않는다.
+- 개발:
+  - `pnpm install --frozen-lockfile`, `pnpm dev`를 실행한다.
+  - 프로젝트 Pages 경로는 `VITE_BASE_PATH=/Tree-Flim/ pnpm build`로 빌드한다. preview에도 같은 환경 변수를 전달한다.
+- 검증:
+  - `E2E_CREDENTIALS_FILE`에는 Git 밖의 권한 제한된 JSON 파일 경로를 지정한다. 형식은 email, password 두 필드다.
+  - `E2E_BASE_URL`을 배포 URL로 설정하고 `pnpm exec playwright test --config playwright.deployment.config.ts`를 실행한다.
+  - 발행 테스트는 임시 제목을 실제 저장·발행하고 원래 제목으로 복구한다. 운영 콘텐츠를 수정 중인 사람과 실행 시점을 조율한다.
+- 배포:
+  - main push 한 번으로 GitHub Pages를 빌드·배포한다. 하위 경로 새로고침을 위한 404 fallback을 포함한다.
+  - `pnpm check:public-boundary`는 HEAD 추적 파일을 검사한다. 전체 Git 이력이나 외부 Secret 저장소 검사는 별도다.

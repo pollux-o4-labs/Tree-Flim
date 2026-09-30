@@ -1,0 +1,28 @@
+.com-c .reveal-photo {
+  filter: none;
+  opacity: 1;
+  animation: com-c-arrive .9s both;
+  animation-delay: calc(var(--reveal-index, 0) * 100ms);
+}
+.com-c .reveal-stage.settled .reveal-photo:not(.selected) {
+  filter: blur(3px);
+  opacity: .28;
+  transition: filter 1s, opacity 1s;
+}
+.com-c .reveal-stage.settled .reveal-photo.selected {
+  animation: com-c-selected 1.5s both;
+}
+@keyframes com-c-arrive {
+  from { opacity: 0; transform: translateY(45px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes com-c-selected {
+  from { filter: blur(3px); opacity: .28; transform: translateY(18px) scale(.94); }
+  to { filter: none; opacity: 1; transform: translateY(-8px) scale(1.04); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .com-c .reveal-photo,
+  .com-c .reveal-stage.settled .reveal-photo.selected { animation: none; }
+  .com-c .card-face,
+  .com-c .card-picker button { transition: none; }
+}

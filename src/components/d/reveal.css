@@ -1,0 +1,76 @@
+.com-d .reveal-photo {
+  filter: none;
+  opacity: 1;
+  animation: com-d-arrive 0.9s both;
+  animation-delay: calc(var(--reveal-index, 0) * 100ms);
+}
+.com-d .category-photo {
+  width: 120px;
+  height: 155px;
+  position: relative;
+}
+.com-d .category-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.com-d .reveal-stage.settled .reveal-photo:not(.selected) {
+  filter: blur(3px);
+  opacity: 0.34;
+  transition:
+    filter 1s,
+    opacity 1s;
+}
+.com-d .reveal-stage.settled .reveal-photo.selected {
+  animation: com-d-selected 1.5s both;
+}
+.com-d .reveal-stage.settled .category-frame.selected {
+  filter: none;
+  opacity: 1;
+}
+.com-d .reveal-stage.settled .category-frame.selected img {
+  filter: blur(0) brightness(0.7);
+}
+@keyframes com-d-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(75px) scale(0.84);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes com-d-selected {
+  from {
+    filter: blur(3px);
+    opacity: 0.34;
+    transform: translateY(25px) scale(0.9);
+  }
+  to {
+    filter: none;
+    opacity: 1;
+    transform: translateY(-13px) scale(1.05);
+  }
+}
+.com-d .stage-state {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  text-align: center;
+  pointer-events: none;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: #eef0e7;
+  background: #44543fcc;
+  padding: 13px 18px;
+  white-space: nowrap;
+}
+.com-d .stage-state .is-hidden {
+  display: none;
+}
+.com-d .category-frame[aria-disabled="true"] {
+  cursor: default;
+}

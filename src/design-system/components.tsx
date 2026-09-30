@@ -14,7 +14,7 @@ export function Disclosure({ title, children }: { title: ReactNode; children: Re
 
 /** Consultation modal: open with showModal() for native focus containment. */
 export function ConsultationModal({ panelRef, labelledBy, children }: { panelRef: RefObject<HTMLDialogElement | null>; labelledBy: string; children: ReactNode }) {
-  return <dialog ref={panelRef} className="inquiry-dialog consultation-panel collection-modal" aria-labelledby={labelledBy} onKeyDown={event => {
+  return <dialog ref={panelRef} className="inquiry-dialog consultation-panel collection-modal ui-scrollbar" aria-labelledby={labelledBy} onKeyDown={event => {
     if (event.key === 'Escape') { event.stopPropagation(); panelRef.current?.close(); }
   }}>
     <button type="button" className="dialog-close" aria-label="문의 닫기" onClick={() => panelRef.current?.close()}><X aria-hidden="true" /></button>

@@ -14,7 +14,7 @@ const moveTowards = (current: number, target: number, distance: number) => {
 export function useTotalSceneMotion(
   root: RefObject<HTMLDivElement | null>,
   category: string | null,
-  layoutKey: number,
+  layoutKey: number | string,
 ) {
   useEffect(() => {
     if (category) return;

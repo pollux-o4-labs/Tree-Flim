@@ -1,0 +1,66 @@
+.photo-card-view {
+  text-align: center;
+  padding: 10px 15px;
+}
+.photo-card-view > .eyebrow {
+  color: var(--total-on-image, #f4f3ed);
+  margin: 0 0 15px;
+}
+.photo-card-view .card-perspective {
+  perspective: 1200px;
+  --rx: 0deg;
+  --ry: 0deg;
+}
+.photo-card-view .photo-card {
+  position: relative;
+  height: min(64svh, 560px);
+  transform-style: preserve-3d;
+  transition: transform 0.7s;
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+}
+.photo-card-view .photo-card.is-flipped {
+  transform: rotateX(var(--rx)) rotateY(calc(180deg + var(--ry)));
+}
+.photo-card-view .card-front,
+.photo-card-view .card-back {
+  position: absolute;
+  inset: 0;
+  background: var(--total-dialog-surface, #f4f3ed);
+  backface-visibility: hidden;
+  box-shadow: 0 25px 50px #0004;
+  padding: 16px;
+}
+.photo-card-view .card-front img {
+  width: 100%;
+  height: calc(100% - 35px);
+  object-fit: contain;
+  background: var(--total-image-surface, #e7e7e0);
+}
+.photo-card-view .card-front > span {
+  position: absolute;
+  top: 70%;
+  left: 10%;
+  right: 10%;
+  color: white;
+  font: 21px/1.8 var(--serif, Georgia, 'Noto Serif KR', serif);
+  text-shadow: 0 1px 8px #0009;
+}
+.photo-card-view .card-front small {
+  display: block;
+  padding-top: 15px;
+  font-size: 8px;
+  letter-spacing: 0.13em;
+}
+.photo-card-view .card-back {
+  transform: rotateY(180deg);
+}
+.photo-card-view .flip-button {
+  display: inline-flex;
+  gap: 12px;
+  align-items: center;
+  color: var(--total-on-image, #f4f3ed);
+  margin-top: 22px;
+  font-size: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) { .photo-card-view .photo-card { transition: none; } }

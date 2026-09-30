@@ -1,0 +1,10 @@
+.image-load-status {
+  position: absolute; inset: 16px 16px 51px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 10px;
+  background: var(--total-image-surface, #e7e7e0); color: #526057;
+  font: 400 12px/1.6 Inter, 'Noto Sans KR', sans-serif; text-align: center;
+}
+.image-load-status small { font-size: 10px; color: #6b756c; padding: 0 !important; letter-spacing: 0 !important; }
+.image-load-spinner { animation: image-load-spin 1.2s linear infinite; }
+@keyframes image-load-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .image-load-spinner { animation: none; } }

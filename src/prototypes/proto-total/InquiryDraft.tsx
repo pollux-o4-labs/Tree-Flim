@@ -14,7 +14,7 @@ export default function InquiryDraft({ inquiry }: { inquiry: string }) {
   const [message, setMessage] = useConsultationValue('message:' + (program?.id ?? 'general'), '');
   const [status, setStatus] = useState('');
   return <div className="inquiry-draft">
-    <div className="inquiry-editor">
+    <div className="inquiry-editor ui-scrollbar">
     <div className="inquiry-subject"><span><Text id={programTitleId} section="문의">{program?.title ?? inquiry}</Text></span>{selected && <strong><Text id={`deck.package.${selected.id}.title`} section="문의">{selected.name}</Text><small><Text id={`deck.package.${selected.id}.price`} section="문의">{formatWon(selected.price)}</Text></small></strong>}</div>
     {program?.id === 'wedding-couple' && <div className="inquiry-package-options" aria-label="촬영 상품">{[{id:'',name:'상담 후 결정'},...weddingPackages].map(item => <button key={item.id} aria-pressed={packageId === item.id} onClick={() => { setPackageId(item.id); setStatus(''); }}><Text id={`deck.package.${item.id || "undecided"}.title`} section="문의">{item.name}</Text></button>)}</div>}
     {selected && <p className="inquiry-explanation"><Text id="InquiryDraft.001" section="문의">{"SNS·후기 동의 시 "}</Text><Text id={`package.${selected.id}.discount`} section="문의">{formatWon(selected.discountedPrice)}</Text><Text id="InquiryDraft.002" section="문의">{" · 추가 비용 별도"}</Text></p>}

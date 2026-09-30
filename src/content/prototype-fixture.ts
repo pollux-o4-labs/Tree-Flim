@@ -4,6 +4,8 @@ export type Photo = {
   src: string;
   story: string;
   category: string;
+  note?: string;
+  location?: string;
 };
 export const concepts: readonly {
   id: string;
